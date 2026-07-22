@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<!--
+  SPDX-License-Identifier: AGPL-3.0-or-later
+  SPDX-FileCopyrightText: 2026 Hallatec Technology Solutions LLC
+
+  AttackRank - part of Hallatec Forge.
+  Canonical: https://attackrank.hallatec.com/
+  Source:    https://github.com/hallatec/hallatec-attackrank
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AttackRank - Vulnerability Priority Engine · Hallatec Forge</title>
+<meta name="description" content="Of everything your scanner flagged, what do you fix first - and why? AttackRank ranks vulnerabilities by CVSS, EPSS, CISA KEV, internet exposure and business criticality. It ranks; it does not scan." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/hallatec.css?v=3" />
+<link rel="canonical" href="https://attackrank.hallatec.com/" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "AttackRank - Vulnerability Priority Engine",
+  "url": "https://attackrank.hallatec.com/",
+  "applicationCategory": "SecurityApplication",
+  "operatingSystem": "Web browser",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AED" },
+  "description": "Ranks vulnerabilities by CVSS, EPSS, CISA KEV, internet exposure and business criticality so you know what to patch first.",
+  "isAccessibleForFree": true,
+  "publisher": { "@type": "Organization", "name": "Hallatec Technology Solutions LLC", "url": "https://hallatec.com/" }
+}
+</script>
+<meta name="author" content="Hallatec Technology Solutions LLC" />
+<meta name="copyright" content="Copyright (C) 2026 Hallatec Technology Solutions LLC" />
+<link rel="license" href="https://www.gnu.org/licenses/agpl-3.0.html" />
+<link rel="code-repository" href="https://github.com/hallatec/hallatec-attackrank" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "AttackRank",
+  "codeRepository": "https://github.com/hallatec/hallatec-attackrank",
+  "programmingLanguage": ["HTML", "CSS", "JavaScript"],
+  "runtimePlatform": "Web browser",
+  "license": "https://www.gnu.org/licenses/agpl-3.0.html",
+  "copyrightYear": "2026",
+  "copyrightHolder": { "@type": "Organization", "name": "Hallatec Technology Solutions LLC", "url": "https://hallatec.com/" },
+  "author": { "@type": "Organization", "name": "Hallatec Technology Solutions LLC", "url": "https://hallatec.com/" },
+  "targetProduct": {
+    "@type": "SoftwareApplication",
+    "name": "AttackRank",
+    "url": "https://attackrank.hallatec.com/",
+    "applicationCategory": "SecurityApplication"
+  },
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Hallatec Forge",
+    "url": "https://forge.hallatec.com/"
+  }
+}
+</script>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="../../index.html" aria-label="Hallatec Forge home"><span class="brand-logo" role="img" aria-label="Hallatec"></span><span class="brand-sub">Forge</span></a>
+    <span class="nav-spring"></span>
+    <a class="back-link" href="../../index.html">← All tools</a>
+  </div>
+</header>
+
+<section class="tool-hero">
+  <div class="wrap">
+    <div class="kbadge"><span class="pill"><span class="tag">Phase 3</span> · Class A / B</span> <span class="chip sev-info">NIST · Identify</span></div>
+    <h1>Of everything flagged, <span class="grad-text">what do you fix first?</span></h1>
+    <p class="lead">AttackRank ranks the vulnerabilities you already found by real-world risk - CVSS severity, exploit probability (EPSS), known exploitation (CISA KEV), internet exposure and business criticality - and explains why each is urgent.</p>
+    <p class="muted" style="margin-top:10px">It ranks what your scanner found. It does not scan.</p>
+  </div>
+</section>
+
+<main class="wrap">
+  <section class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <h3 style="font-size:17px">Your vulnerabilities</h3>
+      <div class="btn-row"><button class="btn btn-ghost btn-sm" id="addRow">+ Add CVE</button><button class="btn btn-ghost btn-sm" id="enrich">⚡ Auto-enrich (demo)</button></div>
+    </div>
+    <p class="muted" style="margin-top:6px">Enter CVE + context. Leave CVSS blank to auto-enrich from the demo feed (in production a Worker pulls CVSS + EPSS + KEV live).</p>
+    <div class="table-wrap" style="margin-top:12px">
+      <table class="matrix" style="min-width:720px"><thead><tr><th>CVE ID</th><th>CVSS</th><th>Internet-facing</th><th>Business criticality</th><th>Compensating control</th><th></th></tr></thead>
+      <tbody id="rows"></tbody></table>
+    </div>
+    <button class="btn btn-primary" id="rankBtn" style="margin-top:16px">Rank my vulnerabilities</button>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results" class="hidden" style="margin-top:22px">
+    <div class="card card-glow" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+      <div class="gauge" id="prGauge" data-value="0"></div>
+      <div style="flex:1;min-width:260px">
+        <p class="eyebrow">Priority pressure</p>
+        <h2 id="prHead" style="margin:6px 0">-</h2>
+        <p id="prLine" class="lead" style="font-size:15px">-</p>
+      </div>
+    </div>
+    <div class="grid g4" id="summary" style="margin-top:22px"></div>
+    <section style="margin-top:22px">
+      <h3>Fix-first priority list</h3>
+      <p class="muted" style="margin-bottom:12px">Deterministic order - ties broken by known exploitation (KEV), then EPSS. Each carries a target SLA.</p>
+      <div id="ranked"></div>
+    </section>
+    <div class="cta" style="margin-top:22px">
+      <p class="eyebrow">Next step</p>
+      <h3>Turn the list into patched systems.</h3>
+      <p>AttackRank tells you the order. Hallatec's vulnerability &amp; patch management closes them on an SLA and proves it - starting with what's exploited and exposed.</p>
+      <div class="btn-row"><button class="btn btn-primary" onclick="HTC.print()">⇩ Export</button><a class="btn btn-ghost" href="mailto:hello@hallatec.com?subject=AttackRank%20-%20patch%20management">Book patch management</a></div>
+      <div class="crosslinks"><a href="../coremap/">Reduce exposure (CoreMap) →</a><a href="../hscore/">Full posture (H-Score) →</a></div>
+    </div>
+    <p class="disclaimer" style="margin-top:16px">Ranks user-supplied findings; not a scanner. EPSS/KEV values shown are illustrative demo data - production enrichment is dated per source ("as of").</p>
+  </section>
+</main>
+
+<footer class="foot"><div class="wrap"><span class="brand-logo foot-logo" role="img" aria-label="Hallatec"></span><span>© 2026 Hallatec Technology Solutions LLC</span><span class="disclaimer">AttackRank · Fix-First Priorities</span></div></footer>
+
+<script src="assets/hallatec.js?v=3"></script>
+<script>
+const $=HTC.$, $$=HTC.$$;
+/* demo enrichment feed (production: NVD + EPSS + CISA KEV via Worker) */
+const FEED = {
+  "CVE-2021-44228":{cvss:10.0,epss:.975,pct:100,kev:true,name:"Log4Shell (Apache Log4j RCE)"},
+  "CVE-2024-3400":{cvss:10.0,epss:.94,pct:99,kev:true,name:"PAN-OS command injection"},
+  "CVE-2023-34362":{cvss:9.8,epss:.94,pct:99,kev:true,name:"MOVEit Transfer SQLi"},
+  "CVE-2023-23397":{cvss:9.8,epss:.90,pct:98,kev:true,name:"Microsoft Outlook EoP"},
+  "CVE-2022-30190":{cvss:7.8,epss:.95,pct:99,kev:true,name:"Follina (MSDT)"},
+  "CVE-2021-34527":{cvss:8.8,epss:.94,pct:99,kev:true,name:"PrintNightmare"},
+  "CVE-2019-0708":{cvss:9.8,epss:.88,pct:97,kev:true,name:"BlueKeep (RDP)"},
+  "CVE-2023-4863":{cvss:8.8,epss:.61,pct:93,kev:true,name:"libwebp heap overflow"}
+};
+function hash(s){ let h=0; for(let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))>>>0; } return h; }
+function lookup(cve){
+  if(FEED[cve]) return FEED[cve];
+  const h=hash(cve); // deterministic pseudo-enrichment for unknown CVEs
+  return { cvss: 4 + (h%60)/10, epss: (h%90)/100, pct: 30+(h%68), kev:false, name:"(from your scanner)" };
+}
+const CRIT = { low:.8, medium:1.0, high:1.2, critical:1.4 };
+const SEED = [
+  {cve:"CVE-2021-44228", cvss:"", exp:true, crit:"critical", ctrl:false},
+  {cve:"CVE-2023-23397", cvss:"", exp:false, crit:"high", ctrl:true},
+  {cve:"CVE-2019-0708", cvss:"", exp:true, crit:"medium", ctrl:false},
+  {cve:"CVE-2023-9001", cvss:"5.4", exp:false, crit:"low", ctrl:true}
+];
+function rowHTML(r){
+  return '<tr>'+
+    '<td><input class="input" style="min-width:150px;padding:8px 10px" value="'+r.cve+'" placeholder="CVE-2024-xxxxx"></td>'+
+    '<td><input class="input cvss" style="width:72px;padding:8px 10px" value="'+r.cvss+'" placeholder="auto"></td>'+
+    '<td><button class="chip-toggle exp" '+(r.exp?'aria-pressed="true"':'')+'><span class="dot"></span>'+(r.exp?'Yes':'No')+'</button></td>'+
+    '<td><select class="input crit" style="padding:8px 10px">'+["low","medium","high","critical"].map(c=>'<option '+(c===r.crit?'selected':'')+'>'+c+'</option>').join("")+'</select></td>'+
+    '<td><button class="chip-toggle ctrl" '+(r.ctrl?'aria-pressed="true"':'')+'><span class="dot"></span>'+(r.ctrl?'Yes':'No')+'</button></td>'+
+    '<td><button class="btn btn-ghost btn-sm del" style="padding:6px 10px">✕</button></td></tr>';
+}
+function renderRows(){ $("#rows").innerHTML = SEED.map(rowHTML).join(""); }
+renderRows();
+document.addEventListener("click", e=>{
+  const t=e.target.closest(".exp,.ctrl"); if(t){ const on=t.getAttribute("aria-pressed")==="true"; t.setAttribute("aria-pressed",on?"false":"true"); t.lastChild.textContent=on?"No":"Yes"; }
+  if(e.target.closest(".del")){ e.target.closest("tr").remove(); }
+});
+$("#addRow").addEventListener("click", ()=> $("#rows").insertAdjacentHTML("beforeend", rowHTML({cve:"",cvss:"",exp:false,crit:"medium",ctrl:false})));
+$("#enrich").addEventListener("click", ()=>{
+  $$("#rows tr").forEach(tr=>{ const cve=tr.querySelector("input").value.trim().toUpperCase(); const c=tr.querySelector(".cvss"); if(cve){ const d=lookup(cve); c.value=d.cvss.toFixed(1); } });
+  HTC.toast("Enriched from demo feed");
+});
+
+function collect(){
+  return $$("#rows tr").map(tr=>{
+    const cve=tr.querySelector("input").value.trim().toUpperCase();
+    const cvssIn=parseFloat(tr.querySelector(".cvss").value);
+    const exp=tr.querySelector(".exp").getAttribute("aria-pressed")==="true";
+    const crit=tr.querySelector(".crit").value;
+    const ctrl=tr.querySelector(".ctrl").getAttribute("aria-pressed")==="true";
+    if(!cve) return null;
+    const d=lookup(cve);
+    const cvss = isNaN(cvssIn)? d.cvss : cvssIn;
+    return {cve,cvss,epss:d.epss,pct:d.pct,kev:d.kev,name:d.name,exp,crit,ctrl};
+  }).filter(Boolean);
+}
+function score(v){
+  const base=v.cvss/10, kev=v.kev?.35:0, expM=v.exp?1.25:1.0, critM=CRIT[v.crit], ctrlM=v.ctrl?.75:1.0;
+  let risk=(0.45*base + 0.4*v.epss + kev)*expM*critM*ctrlM;
+  return Math.round(HTC.clamp(risk,0,1)*100);
+}
+function pband(s){ return s>=75?["P1","24-48 hours","sev-fail"]:s>=55?["P2","7 days","sev-high"]:s>=35?["P3","30 days","sev-warn"]:["P4","90 days","sev-low"]; }
+function narrative(v,s){
+  const bits=[];
+  if(v.kev) bits.push("<b>actively exploited</b> (listed on CISA KEV)");
+  if(v.exp) bits.push("<b>internet-facing</b>");
+  bits.push("on a "+v.crit+"-criticality system");
+  let lead = v.kev? "Patch now - " : s>=55? "High priority - " : "Scheduled - ";
+  const epssTxt = "EPSS puts 30-day exploitation likelihood at "+Math.round(v.epss*100)+"% ("+v.pct+"th percentile)";
+  const ctrlTxt = v.ctrl? " A compensating control lowers the effective risk, but it's mitigation, not a fix." : "";
+  return lead + bits.join(", ") + ". " + epssTxt + "." + ctrlTxt;
+}
+function render(){
+  const list=collect().map(v=>({...v, s:score(v)}));
+  list.sort((a,b)=> b.s-a.s || (b.kev-a.kev) || (b.epss-a.epss));
+  $("#results").classList.remove("hidden");
+  const counts={P1:0,P2:0,P3:0,P4:0}; list.forEach(v=> counts[pband(v.s)[0]]++);
+  // Priority pressure (0-100): the most urgent finding sets the floor, then extra
+  // urgent items (P1 weighted heaviest, then P2) pile pressure on top of it.
+  const topScore = list.length? list[0].s : 0;
+  const pileup = Math.min(30, counts.P1*10 + counts.P2*4);
+  const pressure = list.length? Math.min(100, Math.round(topScore*0.85 + pileup)) : 0;
+  const pBand = pressure>=70?"High":pressure>=40?"Medium":"Low";
+  const pg=$("#prGauge"); pg.dataset.value=pressure;
+  HTC.gauge(pg, pressure, { band: pBand, label:"Fix-first urgency", max:100 });
+  $("#prHead").textContent = pBand+" pressure · "+pressure+"/100";
+  $("#prLine").textContent = list.length
+    ? (counts.P1>0
+        ? counts.P1+" finding"+(counts.P1>1?"s are":" is")+" actively exploited or exposed and needs patching now. Work the list top-down."
+        : "No emergencies, but "+list.length+" finding"+(list.length>1?"s":"")+" still carry risk. Clear them on their target SLAs before they age.")
+    : "Add vulnerabilities above to gauge how much fix-first pressure your backlog is under.";
+  $("#summary").innerHTML = [["P1","≤48h","sev-fail"],["P2","≤7d","sev-high"],["P3","≤30d","sev-warn"],["P4","≤90d","sev-low"]].map(p=>
+    '<div class="card card-2 center"><span class="chip '+p[2]+'" style="font-size:14px">'+p[0]+'</span><div style="font-size:30px;font-weight:700;margin-top:8px">'+counts[p[0]]+'</div><div class="muted">fix within '+p[1]+'</div></div>').join("");
+  $("#ranked").innerHTML = list.map((v,i)=>{
+    const [p,sla,cls]=pband(v.s);
+    return '<div class="finding"><div class="finding-head"><h4>'+(i+1)+'. '+HTC.esc(v.cve)+' <span class="muted" style="font-weight:400">'+(v.name!=="(from your scanner)"?"· "+HTC.esc(v.name):"")+'</span></h4>'+
+      '<span class="chip '+cls+'" style="font-size:13px"><span class="ic">▲</span> '+p+' · '+sla+'</span></div>'+
+      '<p class="sentence">'+narrative(v,v.s)+'</p>'+
+      '<div class="rec-meta" style="margin-top:10px">'+
+        '<span class="control-tag">CVSS <b>'+v.cvss.toFixed(1)+'</b></span>'+
+        '<span class="control-tag">EPSS <b>'+Math.round(v.epss*100)+'%</b> · '+v.pct+'th pct</span>'+
+        '<span class="chip '+(v.kev?'sev-fail':'sev-unknown')+'">'+(v.kev?'KEV: exploited':'KEV: not listed')+'</span>'+
+        '<span class="chip '+(v.exp?'sev-warn':'sev-unknown')+'">'+(v.exp?'Internet-facing':'Internal')+'</span>'+
+        '<span class="control-tag">Criticality <b>'+v.crit+'</b></span>'+
+        (v.ctrl?'<span class="chip sev-info">Compensating control</span>':'')+
+        '<span class="control-tag">Priority score <b>'+v.s+'</b></span></div>'+
+      '<details class="drawer"><summary>Evidence &amp; freshness</summary><div class="drawer-body">'+
+        '<div class="evidence-row"><span class="k">CVSS base</span><span class="v">'+v.cvss.toFixed(1)+' · NVD</span></div>'+
+        '<div class="evidence-row"><span class="k">EPSS</span><span class="v">'+v.epss.toFixed(2)+' (FIRST EPSS v4)</span></div>'+
+        '<div class="evidence-row"><span class="k">CISA KEV</span><span class="v">'+(v.kev?'Listed':'Not listed')+'</span></div>'+
+        '<div class="evidence-row"><span class="k">As of</span><span class="v asof">demo feed · point-in-time</span></div>'+
+      '</div></details></div>';
+  }).join("");
+  /* B06: normalised summary result. Prototype scoring over a demo CVE feed, so
+     status stays demo_only and confidence stays sample - no live NVD/EPSS/KEV pull. */
+  const top = list[0];
+  currentResult = HTC.result({
+    toolId: "attackrank",
+    status: "demo_only",
+    verdict: counts.P1 > 0 ? "urgent_backlog" : "manageable_backlog",
+    label: counts.P1 + " P1 · " + list.length + " ranked (sample)",
+    summary: top
+      ? "Top priority in this sample is " + top.cve + " with a prototype risk score of " + top.s + "/100."
+      : "No vulnerabilities entered.",
+    score: top ? top.s : null,
+    severity: counts.P1 > 0 ? "high" : "medium",
+    confidence: "sample",
+    recommendations: list.slice(0, 3).map(v => pband(v.s)[0] + " " + v.cve)
+  });
+  HTC.reveal($("#results"));
+}
+let currentResult = null;
+$("#rankBtn").addEventListener("click", render);
+</script>
+</body>
+</html>
